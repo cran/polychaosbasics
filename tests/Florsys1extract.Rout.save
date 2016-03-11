@@ -1,0 +1,141 @@
+
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ###########################################################
+> # Computation of Sensitivity Indexes (SI)
+> # for the dataset FLORSYS1.txt 
+> # via Polynomial Chaos Expansion (PCE)
+> ###########################################################
+> 
+> 
+> # Load of necessary functions
+> library("polychaosbasics")
+> 
+> 
+> degree<-4
+> #############################################
+> # Read data
+> #############################################
+> nomlhs<-'FLORSYS1.txt'
+> lhdnat<-read.table(system.file("extdata", nomlhs, package="polychaosbasics"))
+> 
+> #lhdnat<-read.table(paste("../inst/extdata/", nomlhs, sep=""))
+> 
+> 
+> #############################################
+> # Extract some data for reducing execution time
+> #############################################
+>  nlhs <- 200 # nlhs <- nrow(lhd0)
+> nvx <- 3
+> Y<-lhdnat[1:nlhs,ncol(lhdnat)]
+> lhdnat<-lhdnat[1:nlhs, 1:nvx, drop=FALSE]
+> 
+> #############################################
+> # Build Legendre polynomial
+> #############################################
+> pce <- polyLeg(lhdnat, Y, degree)
+> 
+> # -----------------------------------------
+> # Default display
+> # -----------------------------------------
+> print(pce)
+Total number of monomials:  34 
+Number of factors:  3 
+Polynomial degree:  4 
+Number of observations: 200 
+> 
+> # -----------------------------------------
+> # All the components in the returned object
+> # -----------------------------------------
+> getNames(pce)
+ Slot: .Data. Class: "matrix". Dimension: (200, 36). Legendre polynomial
+ Slot: design. Class: "PCEdesign". Dimension: (35, 3). The polynomial structure
+ Slot: nvx. Class: "integer". Length: (1). The number of inputs
+ Slot: call. Class: "call". Length: (4). The command which creates the object
+> # -----------------------------------------
+> # PCEdesign object
+> # -----------------------------------------
+> print(pce@design, all=TRUE)
+Polynomial expression:
+0 + 3 + 2 + 1 + 3*3 + 2*3 + 2*2 + 1*3 + 1*2 + 1*1 + 3*3*3 + 2*3*3 + 2*2*3 + 2*2*2 + 1*3*3 + 1*2*3 + 1*2*2 + 1*1*3 + 1*1*2 + 1*1*1 + 3*3*3*3 + 2*3*3*3 + 2*2*3*3 + 2*2*2*3 + 2*2*2*2 + 1*3*3*3 + 1*2*3*3 + 1*2*2*3 + 1*2*2*2 + 1*1*3*3 + 1*1*2*3 + 1*1*2*2 + 1*1*1*3 + 1*1*1*2 + 1*1*1*1 
+Number of monomials of degree 1: 3
+Number of monomials of degree 2: 6
+Number of monomials of degree 3: 10
+Number of monomials of degree 4: 15
+Total number of monomials:  34 
+Number of factors:  3 
+Polynomial degree:  4 
+> 
+> #############################################
+> # PCESI calculation
+> #############################################
+> retour<- PCESI(pce)
+> print(retour, all=TRUE)
+PCE indexes:
+           LE         PE       TPE
+1 0.080481413 0.23277304 0.6627296
+2 0.001125201 0.12714391 0.6282801
+3 0.024191033 0.02897706 0.4724368
+
+PCE indexes (percentages):
+    %LE   %PE  %TPE
+1 76.07 59.86 37.58
+2  1.06 32.69 35.63
+3 22.87  7.45 26.79
+
+PCE fit:
+        R2      RMSEP 
+ 0.2195124 22.0601565 
+
+Total number of monomials:  34 
+Number of factors:  3 
+Polynomial degree:  4 
+Number of observations: 200 
+
+Also included:
+ * slot 'IMSI' (Individual Monomial Sensitivity Indexes). Length: 35
+ * slot 'coef' (Regression coefficients). Length: 35
+ * slot 'y.hat' (Metamodel output). Length: 200
+ * slot 'call.PCEpoly' (Design creation command).
+> # -----------------------------------------
+> # All the components in the returned object
+> # -----------------------------------------
+> getNames(retour)
+ Slot: indexes. Class: "matrix". Dimension:(3, 3). PCE indexes
+ Slot: indexes.percent. Class: "matrix". Dimension:(3, 3). Percentages of PCE indexes
+ Slot: fit. Class: "numeric". Length:(2). R2 and RMSEP Root Mean Square Error Prediction)
+ Slot: IMSI. Class: "numeric". Length:(35). Individual Monomial Sensitivity Indexes
+ Slot: coef. Class: "numeric". Length:(35). Regression coefficients
+ Slot: y.hat. Class: "numeric". Length:(200). Fitted values of the response
+ Slot: design. Class: "PCEdesign". Dimension:(35, 3). The polynomial structure
+ Slot: call.PCEpoly. Class: "call". Length:(4). The command which creates the input design
+> 
+> 
+> #############################################
+> # Plot Y against Y.hat
+> #############################################
+> jpeg(file="FLORSYS1.jpg")
+>  plot(pce[, "Y"], retour@y.hat, xlab="output", ylab="predicted",
++       main="FLORSYS1 test")
+>  dev.off()
+null device 
+          1 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  1.390   0.100   1.506 

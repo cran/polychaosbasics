@@ -1,0 +1,14 @@
+#Main functions
+export(analyticsPolyLeg, polyLeg, PCESI,
+       print.PCEdesign, print.PCEpoly, print.PCEfit)
+
+exportClasses(PCEdesign, PCEpoly, PCEfit)
+exportMethods(getNames)
+import(methods)
+importFrom("utils", "combn")
+importFrom("MASS", "ginv")
+importFrom("lhs", "randomLHS")
+importFrom("stats", "var")
+S3method(print, PCEdesign)
+S3method(print, PCEpoly)
+S3method(print, PCEfit)

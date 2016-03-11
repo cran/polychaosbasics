@@ -1,0 +1,226 @@
+
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ###########################################################
+> # Computation of Sensitivity Indexes (SI)
+> # for the so-called Ishigami function
+> # via Polynomial Chaos Expansion (PCE)
+> ###########################################################
+> 
+> 
+> # Load of necessary functions
+> library("polychaosbasics")
+> 
+> nlhs<-200 # the number of rows of the complete dataset is 20000
+> degree<-6
+> #############################################
+> # Build Legendre polynomial
+> #############################################
+> set.seed(42)
+> pce <- analyticsPolyLeg(nlhs, degree, 'ishigami')
+> # -----------------------------------------
+> # Default display
+> # -----------------------------------------
+> print(pce)
+Total number of monomials:  83 
+Number of factors:  3 
+Polynomial degree:  6 
+Number of observations: 200 
+> 
+> # -----------------------------------------
+> # More display
+> # -----------------------------------------
+> print(pce, all=TRUE)
+Polynomial expression:
+0 + 3 + 2 + 1 + 3*3 + 2*3 + 2*2 + 1*3 + 1*2 + 1*1 + 3*3*3 + 2*3*3 + 2*2*3 + 2*2*2 + 1*3*3 + 1*2*3 + 1*2*2 + 1*1*3 + 1*1*2 + 1*1*1 + 3*3*3*3 + 2*3*3*3 + 2*2*3*3 + 2*2*2*3 + 2*2*2*2 + 1*3*3*3 + 1*2*3*3 + 1*2*2*3 + 1*2*2*2 + 1*1*3*3 + 1*1*2*3 + 1*1*2*2 + 1*1*1*3 + 1*1*1*2 + 1*1*1*1 + 3*3*3*3*3 + 2*3*3*3*3 + 2*2*3*3*3 + 2*2*2*3*3 + 2*2*2*2*3 + 2*2*2*2*2 + 1*3*3*3*3 + 1*2*3*3*3 + 1*2*2*3*3 + 1*2*2*2*3 + 1*2*2*2*2 + 1*1*3*3*3 + 1*1*2*3*3 + 1*1*2*2*3 + 1*1*2*2*2 + 1*1*1*3*3 + 1*1*1*2*3 + 1*1*1*2*2 + 1*1*1*1*3 + 1*1*1*1*2 + 1*1*1*1*1 + 3*3*3*3*3*3 + 2*3*3*3*3*3 + 2*2*3*3*3*3 + 2*2*2*3*3*3 + 2*2*2*2*3*3 + 2*2*2*2*2*3 + 2*2*2*2*2*2 + 1*3*3*3*3*3 + 1*2*3*3*3*3 + 1*2*2*3*3*3 + 1*2*2*2*3*3 + 1*2*2*2*2*3 + 1*2*2*2*2*2 + 1*1*3*3*3*3 + 1*1*2*3*3*3 + 1*1*2*2*3*3 + 1*1*2*2*2*3 + 1*1*2*2*2*2 + 1*1*1*3*3*3 + 1*1*1*2*3*3 + 1*1*1*2*2*3 + 1*1*1*2*2*2 + 1*1*1*1*3*3 + 1*1*1*1*2*3 + 1*1*1*1*2*2 + 1*1*1*1*1*3 + 1*1*1*1*1*2 + 1*1*1*1*1*1 
+Number of monomials of degree 1: 3
+Number of monomials of degree 2: 6
+Number of monomials of degree 3: 10
+Number of monomials of degree 4: 15
+Number of monomials of degree 5: 21
+Number of monomials of degree 6: 28
+Total number of monomials:  83 
+Number of factors:  3 
+Polynomial degree:  6 
+Number of observations: 200 
+Created by:
+analyticsPolyLeg(nlhs = nlhs, degree = degree, model.fun = "ishigami")
+> 
+> # -----------------------------------------
+> # All the components in the returned object
+> # -----------------------------------------
+> getNames(pce)
+ Slot: .Data. Class: "matrix". Dimension: (200, 85). Legendre polynomial
+ Slot: design. Class: "PCEdesign". Dimension: (84, 3). The polynomial structure
+ Slot: nvx. Class: "numeric". Length: (1). The number of inputs
+ Slot: call. Class: "call". Length: (4). The command which creates the object
+> 
+> #############################################
+> # PCESI calculation
+> #############################################
+> retour<- PCESI(pce)
+> # -----------------------------------------
+> # Default display
+> # -----------------------------------------
+> print(retour)
+PCE indexes:
+            LE           PE       TPE
+1 1.942093e-01 0.2993148652 0.5573437
+2 1.343249e-04 0.4370083248 0.4566250
+3 5.424703e-05 0.0005095508 0.2606808
+
+PCE indexes (percentages):
+    %LE   %PE  %TPE
+1 99.90 40.62 43.73
+2  0.07 59.31 35.82
+3  0.03  0.07 20.45
+
+PCE fit:
+       R2     RMSEP 
+0.9918809 1.0092547 
+> 
+> # -----------------------------------------
+> # More display
+> # -----------------------------------------
+> print(retour, all=TRUE)
+PCE indexes:
+            LE           PE       TPE
+1 1.942093e-01 0.2993148652 0.5573437
+2 1.343249e-04 0.4370083248 0.4566250
+3 5.424703e-05 0.0005095508 0.2606808
+
+PCE indexes (percentages):
+    %LE   %PE  %TPE
+1 99.90 40.62 43.73
+2  0.07 59.31 35.82
+3  0.03  0.07 20.45
+
+PCE fit:
+       R2     RMSEP 
+0.9918809 1.0092547 
+
+Total number of monomials:  83 
+Number of factors:  3 
+Polynomial degree:  6 
+Number of observations: 200 
+
+Also included:
+ * slot 'IMSI' (Individual Monomial Sensitivity Indexes). Length: 84
+ * slot 'coef' (Regression coefficients). Length: 84
+ * slot 'y.hat' (Metamodel output). Length: 200
+ * slot 'call.PCEpoly' (Design creation command).
+> 
+> # -----------------------------------------
+> # All the components in the returned object
+> # -----------------------------------------
+> getNames(retour)
+ Slot: indexes. Class: "matrix". Dimension:(3, 3). PCE indexes
+ Slot: indexes.percent. Class: "matrix". Dimension:(3, 3). Percentages of PCE indexes
+ Slot: fit. Class: "numeric". Length:(2). R2 and RMSEP Root Mean Square Error Prediction)
+ Slot: IMSI. Class: "numeric". Length:(84). Individual Monomial Sensitivity Indexes
+ Slot: coef. Class: "numeric". Length:(84). Regression coefficients
+ Slot: y.hat. Class: "numeric". Length:(200). Fitted values of the response
+ Slot: design. Class: "PCEdesign". Dimension:(84, 3). The polynomial structure
+ Slot: call.PCEpoly. Class: "call". Length:(4). The command which creates the input design
+> 
+> # -----------------------------------------
+> # Individual Monomial SI
+> # -----------------------------------------
+> print(retour@IMSI)
+           0            3            2            1          3*3          2*3 
+0.000000e+00 5.424703e-05 1.343249e-04 1.942093e-01 1.478632e-05 2.567969e-04 
+         2*2          1*3          1*2          1*1        3*3*3        2*3*3 
+2.812170e-02 1.006152e-03 3.966840e-04 1.452279e-05 2.521707e-06 2.771045e-04 
+       2*2*3        2*2*2        1*3*3        1*2*3        1*2*2        1*1*3 
+4.843545e-04 2.949251e-05 1.451401e-01 1.222330e-03 6.997243e-05 8.870533e-04 
+       1*1*2        1*1*1      3*3*3*3      2*3*3*3      2*2*3*3      2*2*2*3 
+6.040834e-06 1.025045e-01 1.756174e-04 1.707974e-04 2.524316e-05 9.042412e-05 
+     2*2*2*2      1*3*3*3      1*2*3*3      1*2*2*3      1*2*2*2      1*1*3*3 
+2.629396e-01 1.258025e-03 1.130907e-03 6.636881e-04 1.540533e-04 8.415426e-04 
+     1*1*2*3      1*1*2*2      1*1*1*3      1*1*1*2      1*1*1*1    3*3*3*3*3 
+1.277428e-03 2.785576e-06 5.177434e-04 2.699247e-04 2.163476e-06 1.981472e-04 
+   2*3*3*3*3    2*2*3*3*3    2*2*2*3*3    2*2*2*2*3    2*2*2*2*2    1*3*3*3*3 
+5.639621e-04 2.631430e-05 2.234080e-04 1.373174e-03 8.387289e-05 2.061807e-02 
+   1*2*3*3*3    1*2*2*3*3    1*2*2*2*3    1*2*2*2*2    1*1*3*3*3    1*1*2*3*3 
+1.045382e-03 4.380642e-05 9.984758e-04 1.541577e-04 8.601736e-04 6.069663e-06 
+   1*1*2*2*3    1*1*2*2*2    1*1*1*3*3    1*1*1*2*3    1*1*1*2*2    1*1*1*1*3 
+2.904036e-05 6.467036e-05 7.176688e-02 9.831412e-05 4.312773e-04 4.994528e-05 
+   1*1*1*1*2    1*1*1*1*1  3*3*3*3*3*3  2*3*3*3*3*3  2*2*3*3*3*3  2*2*2*3*3*3 
+2.171905e-04 2.440710e-03 6.423115e-05 4.690943e-04 4.614185e-04 1.174221e-05 
+ 2*2*2*2*3*3  2*2*2*2*2*3  2*2*2*2*2*2  1*3*3*3*3*3  1*2*3*3*3*3  1*2*2*3*3*3 
+1.892316e-06 7.026656e-04 1.456994e-01 1.200088e-04 9.081360e-05 2.629136e-04 
+ 1*2*2*2*3*3  1*2*2*2*2*3  1*2*2*2*2*2  1*1*3*3*3*3  1*1*2*3*3*3  1*1*2*2*3*3 
+6.460073e-04 5.938005e-04 1.148553e-04 8.477635e-05 9.000870e-05 2.212694e-03 
+ 1*1*2*2*2*3  1*1*2*2*2*2  1*1*1*3*3*3  1*1*1*2*3*3  1*1*1*2*2*3  1*1*1*2*2*2 
+8.430229e-04 2.532660e-04 2.860634e-04 1.770837e-04 5.047014e-05 4.789844e-04 
+ 1*1*1*1*3*3  1*1*1*1*2*3  1*1*1*1*2*2  1*1*1*1*1*3  1*1*1*1*1*2  1*1*1*1*1*1 
+1.137972e-04 8.026712e-09 3.465777e-04 2.158072e-07 3.559168e-05 1.436852e-04 
+> 
+> # -----------------------------------------
+> # Regression coefficients
+> # -----------------------------------------
+> print(retour@coef)
+           0            3            2            1          3*3          2*3 
+ 3.472786805 -0.049290772 -0.077563225  2.949257199 -0.033058016 -0.195430309 
+         2*2          1*3          1*2          1*1        3*3*3        2*3*3 
+-1.441675693  0.359542974  0.226599919 -0.032762107 -0.016070076 -0.255959958 
+       2*2*3        2*2*2        1*3*3        1*2*3        1*2*2        1*1*3 
+-0.340842778  0.054957447  5.714854527  0.705700469  0.121205276 -0.452231748 
+       1*1*2        1*1*1      3*3*3*3      2*3*3*3      2*2*3*3      2*2*2*3 
+ 0.035542726 -3.239978050 -0.151290240 -0.233184548  0.097418993  0.177774354 
+     2*2*2*2      1*3*3*3      1*2*3*3      1*2*2*3      1*2*2*2      1*1*3*3 
+-5.854031941  0.595034262  0.863232353  0.660596580  0.220508855 -0.610296361 
+     1*1*2*3      1*1*2*2      1*1*1*3      1*1*1*2      1*1*1*1    3*3*3*3*3 
+-0.940830982 -0.030969048  0.406491165  0.264051305 -0.016792028  0.176690687 
+   2*3*3*3*3    2*2*3*3*3    2*2*2*3*3    2*2*2*2*3    2*2*2*2*2    1*3*3*3*3 
+-0.489142740  0.112759047  0.347465060 -0.787680357  0.114955697  2.833736873 
+   1*2*3*3*3    1*2*2*3*3    1*2*2*2*3    1*2*2*2*2    1*1*3*3*3    1*1*2*3*3 
+ 0.891259444  0.212933667  1.000051081 -0.250908743 -0.683352622  0.089523567 
+   1*1*2*2*3    1*1*2*2*2    1*1*1*3*3    1*1*1*2*3    1*1*1*2*2    1*1*1*1*3 
+-0.194317424 -0.173610472 -6.170289208  0.298019523  0.426700852  0.142413536 
+   1*1*1*1*2    1*1*1*1*1  3*3*3*3*3*3  2*3*3*3*3*3  2*2*3*3*3*3  2*2*2*3*3*3 
+-0.264769082  0.620122853 -0.108772085  0.465146197  0.539310232 -0.096340422 
+ 2*2*2*2*3*3  2*2*2*2*2*3  2*2*2*2*2*2  1*3*3*3*3*3  1*2*3*3*3*3  1*2*2*3*3*3 
+ 0.035316629  0.619825343  5.180521086  0.233559572 -0.319917687  0.562240086 
+ 1*2*2*2*3*3  1*2*2*2*2*3  1*2*2*2*2*2  1*1*3*3*3*3  1*1*2*3*3*3  1*1*2*2*3*3 
+ 1.023918238  0.882284696  0.248510591 -0.251957253 -0.358171163 -2.194488541 
+ 1*1*2*2*2*3  1*1*2*2*2*2  1*1*1*3*3*3  1*1*1*2*3*3  1*1*1*2*2*3  1*1*1*2*2*2 
+-1.171735719  0.415348869  0.437952148  0.513097633 -0.284885816  0.536369115 
+ 1*1*1*1*3*3  1*1*1*1*2*3  1*1*1*1*2*2  1*1*1*1*1*3  1*1*1*1*1*2  1*1*1*1*1*1 
+-0.278669407 -0.002977771 -0.408865971  0.010485991 -0.115730144  0.162686155 
+> 
+> 
+> #############################################
+> # Plot  Y.hat (x-axis) against Y.hat (x-axis)
+> # and regression line
+> #############################################
+> y.hat <-retour@y.hat
+> y.obs <- pce[, "Y"]
+> reg <- lm(y.hat ~ y.obs)
+> jpeg(file="Ishigami.jpg")
+>  plot(y.hat, y.obs,
++       xlab="metamodel output", ylab="computer model output",
++       main="Ishigami test", sub="Scatter plot and regression line")
+> lines(reg$fitted.values, y.obs)
+>  dev.off()
+null device 
+          1 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  1.697   0.138   1.836 
