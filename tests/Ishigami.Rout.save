@@ -205,7 +205,7 @@ Also included:
 > 
 > 
 > #############################################
-> # Plot  Y.hat (x-axis) against Y.hat (x-axis)
+> # Plot  Y.hat (x-axis) against Y (y-axis)
 > # and regression line
 > #############################################
 > y.hat <-retour@y.hat
@@ -223,4 +223,4 @@ null device
 > 
 > proc.time()
    user  system elapsed 
-  1.697   0.138   1.836 
+  1.623   0.066   1.679 

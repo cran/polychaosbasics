@@ -61,7 +61,7 @@ print(retour@coef)
 
 
 #############################################
-# Plot  Y.hat (x-axis) against Y.hat (x-axis)
+# Plot  Y.hat (x-axis) against Y (y-axis)
 # and regression line
 #############################################
 y.hat <-retour@y.hat
